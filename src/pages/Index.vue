@@ -15,7 +15,7 @@
               v-for="index in 10"
               :key="index"
             >
-              <span>{{ `btn${index === 10 ? 0 : index}` }}</span>
+              <span>{{ index === 10 ? 0 : index }}</span>
             </button>
           </div>
         </div>
@@ -30,11 +30,35 @@
 </template>
 
 <script>
+import { Howl } from "howler/dist/howler.core.min";
+import E5 from "@/assets/sounds/piano/e5.mp3";
+import C4 from "@/assets/sounds/piano/c4.mp3";
+import D4 from "@/assets/sounds/piano/d4.mp3";
+import E4 from "@/assets/sounds/piano/e4.mp3";
+import F4 from "@/assets/sounds/piano/f4.mp3";
+import G4 from "@/assets/sounds/piano/g4.mp3";
+import A4 from "@/assets/sounds/piano/a5.mp3";
+import B4 from "@/assets/sounds/piano/b5.mp3";
+import C5 from "@/assets/sounds/piano/c5.mp3";
+import D5 from "@/assets/sounds/piano/d5.mp3";
+
 export default {
   data() {
     return {
       showPiano: false,
       reveal: false,
+      notes: [
+        new Howl({ src: E5 }),
+        new Howl({ src: C4 }),
+        new Howl({ src: D4 }),
+        new Howl({ src: E4 }),
+        new Howl({ src: F4 }),
+        new Howl({ src: G4 }),
+        new Howl({ src: A4 }),
+        new Howl({ src: B4 }),
+        new Howl({ src: C5 }),
+        new Howl({ src: D5 }),
+      ],
     };
   },
 
@@ -53,8 +77,8 @@ export default {
       }, 100);
     },
 
-    play(note) {
-      console.log(note);
+    play(number) {
+      this.notes[number].play();
     },
 
     swapElements() {

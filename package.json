@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "gridsome": "^0.7.0",
-    "gridsome-plugin-sass-resources-loader": "^0.0.3"
+    "gridsome-plugin-sass-resources-loader": "^0.0.3",
+    "howler": "^2.2.3"
   },
   "devDependencies": {
     "eslint": "^7.30.0",
