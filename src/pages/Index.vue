@@ -10,7 +10,7 @@
           <div class="notes">
             <h1 class="notes__title">{{ notes.title }}</h1>
             <p class="notes__text">{{ notes.notes }}</p>
-            <button class="notes__btn" @click="nextNotes()">Next</button>
+            <button class="notes__btn" @click="nextSong()">Next</button>
           </div>
 
           <div class="piano">
@@ -104,7 +104,7 @@ export default {
       }
     },
 
-    nextNotes() {
+    nextSong() {
       this.notes = this.notesGen.next().value;
     },
 
@@ -137,14 +137,17 @@ export default {
   mounted() {
     this.swapElements();
 
-    this.nextNotes();
+    this.nextSong();
 
     let self = this;
-    window.onkeyup = function (event) {
+    window.onkeypress = function (event) {
       const key = event.key;
-
-      if (self.showPiano && !isNaN(key) && key !== " ") {
-        self.pressNote(key);
+      if (self.showPiano) {
+        if (key !== " " && !isNaN(key)) {
+          self.pressNote(key);
+        } else if (key === "Enter") {
+          self.nextSong();
+        }
       }
     };
   },
