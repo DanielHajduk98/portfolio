@@ -6,7 +6,7 @@
           <div v-if="reveal" class="reveal"></div>
         </transition>
 
-        <div v-if="showPiano" class="container center piano-wrapper">
+        <div v-if="showPiano" class="piano-wrapper">
           <div class="notes">
             <h1 class="notes__title">{{ notes.title }}</h1>
             <p class="notes__text">{{ notes.notes }}</p>
@@ -160,10 +160,10 @@ export default {
   height: 100vh;
 
   &__container {
-    @extend .container, .center;
+    @extend .container, .center, .box-sizing-border-box;
+
     position: relative;
     margin: auto;
-    padding: 0;
 
     height: 100%;
     flex-direction: column;
@@ -214,47 +214,29 @@ export default {
 }
 
 .piano-wrapper {
-  @extend .container, .center;
+  @extend .container, .box-sizing-border-box;
+
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: 1fr;
+  justify-content: center;
+  align-items: center;
 
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
 
-.piano {
-  text-align: center;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-gap: 2px;
-  width: 30%;
-  max-width: 500px;
-  margin-top: 25px;
-
-  &__keys {
-    background: #fff;
-    height: 125px;
-    border-radius: 0 0 15px 15px;
-    box-shadow: 2px 2px 4px gray;
-    border: none;
+  @include sm {
+    grid-gap: 25px;
     display: flex;
-    justify-content: flex-end;
     flex-direction: column;
+  }
 
-    & > span {
-      font-size: 1rem;
-      text-align: center;
-      margin-bottom: 10px;
-    }
+  @include md {
+    width: 70vw;
+  }
 
-    &.active,
-    &:active {
-      box-shadow: 2px 2px 4px gray, 1px 0px rgba(0, 0, 0, 0.1) inset,
-        -1px 0px rgba(0, 0, 0, 0.1) inset;
-      background: linear-gradient(to bottom, #fff 0%, #eee 100%);
-    }
+  @include lg {
+    width: 45vw;
   }
 }
 
@@ -262,9 +244,10 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: column;
+  align-self: end;
 
-  @include md {
-    max-width: 70vw;
+  @include sm {
+    align-self: center;
   }
 
   &__text {
@@ -282,6 +265,73 @@ export default {
       max-width: 64px;
       width: 100%;
       height: auto;
+    }
+  }
+}
+
+.piano {
+  text-align: center;
+  display: grid;
+  width: 100%;
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-gap: 5px;
+
+  @include sm {
+    align-self: start;
+    grid-gap: 2px;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(10, 1fr);
+  }
+
+  &__keys {
+    background: #fff;
+    box-shadow: 2px 2px 4px gray;
+    border: none;
+    display: flex;
+    flex-direction: column;
+
+    height: 8vh;
+    border-radius: 15px;
+    justify-content: center;
+
+    &:is(:last-child) {
+      grid-column: 1/4;
+    }
+
+    @include sm {
+      height: auto;
+      border-radius: 0 0 15px 15px;
+      justify-content: flex-end;
+
+      // Responsible for aspect ratio
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 1px;
+        padding-bottom: calc(100% / (1 / 1.7));
+      }
+
+      &:is(:last-child) {
+        grid-column: auto;
+      }
+    }
+
+    & > span {
+      font-size: 1rem;
+      text-align: center;
+
+      @include sm {
+        margin-bottom: 10px;
+      }
+    }
+
+    &.active,
+    &:active {
+      box-shadow: 2px 2px 4px gray, 1px 0px rgba(0, 0, 0, 0.1) inset,
+        -1px 0px rgba(0, 0, 0, 0.1) inset;
+      background: linear-gradient(to bottom, #fff 0%, #eee 100%);
     }
   }
 }
