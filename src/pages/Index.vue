@@ -116,8 +116,7 @@ export default {
     },
 
     addOnKeyPressWatcher() {
-      let self = this;
-      window.onkeydown = self.keyPressWatcher;
+      window.onkeydown = this.keyPressWatcher;
     },
 
     keyPressWatcher(event) {
