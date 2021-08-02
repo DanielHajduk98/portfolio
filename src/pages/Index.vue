@@ -15,7 +15,7 @@
 
           <div class="piano">
             <button
-              :ref="`btn${index === 10 ? 0 : index}`"
+              ref="btn"
               @click="play(index === 10 ? 0 : index)"
               class="piano__keys"
               v-for="index in 10"
@@ -53,6 +53,7 @@ import songs from "@/assets/files/songs.js";
 export default {
   data() {
     return {
+      NUMBER_OF_KEYS: 10,
       notesGen: this.notesGenerator(),
       notes: "",
       showPiano: false,
@@ -90,7 +91,7 @@ export default {
     },
 
     pressNote(note) {
-      const btnRef = this.$refs[`btn${note}`][0];
+      const btnRef = this.$refs["btn"][note];
 
       btnRef.classList.add("active");
       btnRef.click();
@@ -103,8 +104,8 @@ export default {
       this.audio[number].play();
     },
 
-    swapElements() {
-      setTimeout(() => {
+    async swapElements() {
+      await setTimeout(() => {
         this.reveal = true;
       }, 1000);
     },
@@ -113,23 +114,29 @@ export default {
       this.reveal = false;
       this.showPiano = true;
     },
+
+    addOnKeyPressWatcher() {
+      let self = this;
+      window.onkeydown = self.keyPressWatcher;
+    },
+
+    keyPressWatcher(event) {
+      const key = event.key;
+
+      if (this.showPiano) {
+        if (key !== " " && !isNaN(key)) {
+          this.pressNote(key);
+        } else if (key === "Enter") {
+          this.nextSong();
+        }
+      }
+    },
   },
 
   mounted() {
     this.swapElements();
     this.nextSong();
-
-    let self = this;
-    window.onkeypress = function (event) {
-      const key = event.key;
-      if (self.showPiano) {
-        if (key !== " " && !isNaN(key)) {
-          self.pressNote(key);
-        } else if (key === "Enter") {
-          self.nextSong();
-        }
-      }
-    };
+    this.addOnKeyPressWatcher();
   },
 };
 </script>
