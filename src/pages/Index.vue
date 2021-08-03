@@ -6,7 +6,7 @@
           <div v-if="reveal" class="reveal"></div>
         </transition>
 
-        <div v-if="showPiano" class="piano-wrapper">
+        <div v-show="showPiano" class="piano-wrapper">
           <div class="notes">
             <h1 class="notes__title">{{ notes.title }}</h1>
             <p class="notes__text">{{ notes.notes }}</p>
@@ -16,17 +16,18 @@
           <div class="piano">
             <button
               ref="btn"
+              :data-note="index === 10 ? 0 : index"
               @click="play(index === 10 ? 0 : index)"
               class="piano__keys"
               v-for="index in 10"
               :key="index"
             >
-              <span>{{ index === 10 ? 0 : index }}</span>
+              {{ index === 10 ? 0 : index }}
             </button>
           </div>
         </div>
 
-        <div v-else class="text">
+        <div v-if="!showPiano" class="text">
           <h1 class="text__title">🎉</h1>
           <h4 class="text__subtitle">Made to waste your time!</h4>
         </div>
@@ -53,7 +54,6 @@ import songs from "@/assets/files/songs.js";
 export default {
   data() {
     return {
-      NUMBER_OF_KEYS: 10,
       notesGen: this.notesGenerator(),
       notes: "",
       showPiano: false,
@@ -91,7 +91,7 @@ export default {
     },
 
     pressNote(note) {
-      const btnRef = this.$refs["btn"][note];
+      const btnRef = this.$refs["btn"].find((btn) => btn.dataset.note === note);
 
       btnRef.classList.add("active");
       btnRef.click();
@@ -115,11 +115,11 @@ export default {
       this.showPiano = true;
     },
 
-    addOnKeyPressWatcher() {
-      window.onkeydown = this.keyPressWatcher;
+    addOnKeyDownWatcher() {
+      window.onkeydown = this.keyPressHandler;
     },
 
-    keyPressWatcher(event) {
+    keyPressHandler(event) {
       const key = event.key;
 
       if (this.showPiano) {
@@ -130,12 +130,26 @@ export default {
         }
       }
     },
+
+    addOnTouchStartHandler() {
+      const btnRef = this.$refs.btn;
+      btnRef.forEach((btn) => {
+        btn.ontouchstart = this.touchStartHandler;
+      });
+    },
+
+    touchStartHandler(event) {
+      event.preventDefault();
+      const note = event.target.dataset.note;
+      this.pressNote(note);
+    },
   },
 
   mounted() {
     this.swapElements();
     this.nextSong();
-    this.addOnKeyPressWatcher();
+    this.addOnKeyDownWatcher();
+    this.addOnTouchStartHandler();
   },
 };
 </script>
@@ -278,6 +292,9 @@ export default {
     display: flex;
     flex-direction: column;
 
+    font-size: 1rem;
+    text-align: center;
+
     height: 8vh;
     border-radius: 15px;
     justify-content: center;
@@ -290,6 +307,8 @@ export default {
       height: auto;
       border-radius: 0 0 15px 15px;
       justify-content: flex-end;
+
+      padding-bottom: 10px;
 
       // Responsible for aspect ratio
       &::before {
@@ -304,20 +323,18 @@ export default {
       }
     }
 
-    & > span {
-      font-size: 1rem;
-      text-align: center;
-
-      @include sm {
-        margin-bottom: 10px;
-      }
-    }
-
-    &.active,
-    &:active {
+    &.active {
       box-shadow: 2px 2px 4px gray, 1px 0px rgba(0, 0, 0, 0.1) inset,
         -1px 0px rgba(0, 0, 0, 0.1) inset;
       background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+    }
+
+    @media (pointer: fine) {
+      &:active {
+        box-shadow: 2px 2px 4px gray, 1px 0px rgba(0, 0, 0, 0.1) inset,
+          -1px 0px rgba(0, 0, 0, 0.1) inset;
+        background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+      }
     }
   }
 }
